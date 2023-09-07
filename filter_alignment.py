@@ -31,7 +31,7 @@ def main(alignment_file, identity, seq_len):
             # Ignore hits with low identity and short length
             if ident < identity or seq_n < seq_len:
                 continue
-            print(ch, ch_len, ch_start, ch_end, ctg_len, ctg_start, ctg_end, identity, ctg, seq_len, it[4])
+            print(ch, ch_len, ch_start, ch_end, ctg_len, ctg_start, ctg_end, ident, ctg, seq_n, it[4])
 
 
 if __name__ == '__main__':
