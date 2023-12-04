@@ -38,7 +38,7 @@ def main(alignment_file, output):
             ch = it[0]
             ch_len = int(it[1])
             ch_start, ch_end = int(it[2]), int(it[3])
-            ctg = it[8]
+            ctg = it[7]
             ctg_len = int(it[4])
             ctg_start, ctg_end = int(it[5]), int(it[6])
             reverse = it[-1] == '-'
@@ -108,11 +108,17 @@ def join_contigs(contigs):
                 joined[-1].ctg_end = contigs[ind].ctg_end
                 joined[-1].chr_end = contigs[ind].chr_end
         elif joined[-1].chr_end < contigs[ind].chr_end:
-            if joined[-1].chr_start < contigs[ind].chr_start:
+            if joined[-1].chr_start <= contigs[ind].chr_start:
                 if joined[-1].chr_end > contigs[ind].chr_start:
                     diff = joined[-1].chr_end - contigs[ind].chr_start
                     contigs[ind].chr_start = joined[-1].chr_end
                     contigs[ind].ctg_start += diff
+                else:
+                    gap_len = contigs[ind].chr_start - joined[-1].chr_end
+                    gap = Align(
+                        contigs[ind].chr_id, -1, -1, -1,
+                        'gap', gap_len, 0, gap_len, False)
+                    joined.append(gap)
                 joined.append(contigs[ind])
             else:
                 joined[-1] = contigs[ind]

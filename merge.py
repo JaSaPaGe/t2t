@@ -5,6 +5,7 @@ import numpy as np
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
+import json
 
 class Align(object):
 
@@ -34,18 +35,34 @@ def main(assembly, config, output):
     chroms = [f'chr{i}' for i in range(1, 23)]
     chroms.append('chrX')
     records = merge_contigs(assembly, config)
+
+    out_bed = os.path.splitext(output)[0] + '.cen-mask.bed'
     
-    with open(output, 'w') as f:
+    with open(output, 'w') as f, open(out_bed, 'w') as cen_mask:
         for chrom in chroms:
-            mrec = SeqRecord(Seq(''), id=chrom, name=chrom)
+            mrec = SeqRecord(Seq(''), id=chrom, name=chrom, description='')
+            c_s = 0
             for chunk in ['s', 'c', 'e']:
                 rec_id = chrom + '_' + chunk
                 if rec_id in records:
                     rec = records[rec_id]
+                    if chunk == 's':
+                        c_s = len(rec.seq)
+                    elif chunk == 'c':
+                        c_e = c_s + len(rec.seq)
                     mrec.seq += rec.seq
+            cen_mask.write(f'{chrom}\t{c_s}\t{c_e}\n')
             SeqIO.write(mrec, f, 'fasta')
+        # SeqIO.write(get_chrM(), f, 'fasta')
         
-    
+
+def get_chrM():
+    with open('data/chrMv0.3.0.fa') as f:
+        sequences = SeqIO.parse(f, 'fasta')
+        rec = next(sequences)
+    rec.description = ''
+    return rec
+
 def merge_contigs(assembly, config):
     with open(config) as f:
         json_text = f.read()
