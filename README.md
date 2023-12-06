@@ -7,5 +7,6 @@ This command will produce the assemblies for haplotypes
 two files:
 * genome.asm.hic.hap1.p_ctg.gfa
 * genome.asm.hic.hap2.p_ctg.gfa
+
 And merged genome will be saved in:
 * genome.asm.hic.p_ctg.gfa
