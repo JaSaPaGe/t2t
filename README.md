@@ -10,3 +10,12 @@ two files:
 
 And merged genome will be saved in:
 * genome.asm.hic.p_ctg.gfa
+
+The *.gfa files can be converted to FASTA with the following command:
+```awk '/^S/{print ">"$2;print $3}' genome.asm.hic.p_ctg.gfa > genome.asm.fa```
+
+## Chromosome scaffolding with [MaSuRCA](https://github.com/alekseyzimin/masurca)
+
+```chromosome_scaffolder.sh -t 64 -r chm13v2.0.fa -q genome.asm.fa -s hifi.fastq.gz -ch 50```
+
+The scaffolded genome will be saved in *.reconciled.fa file
