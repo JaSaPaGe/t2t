@@ -11,7 +11,7 @@ from Bio.SeqRecord import SeqRecord
     '--alignment-file', '-af', default='minimap/verkko_trio_aln_hap2.srt.paf',
     help='Sorted output of minimap2 alignment to CHM13 without centromeres')
 @ck.option('--identity',  '-i', default=90)
-@ck.option('--seq-len', '-s', default=10000)
+@ck.option('--seq-len', '-s', default=100000)
 def main(alignment_file, identity, seq_len):
     """Takes sorted output of alignment file. Use sort -k6,6 -k8,8n """
     chroms = [f'chr{i}' for i in range(1, 23)]

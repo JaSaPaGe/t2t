@@ -58,43 +58,18 @@ def main(alignment_file, output):
 
     res = {}
     for ch in chroms:
-        start_id = ch + '_s'
-        end_id = ch + '_e'
-        if start_id in aligns:
-            ctgs = get_contigs(ch, aligns[start_id], aligns[end_id])
-        elif end_id in aligns:
-            ctgs = get_contigs(ch, None, aligns[end_id])
-        res.update(ctgs)
+        if ch in aligns:
+            ctgs = get_contigs(ch, aligns[ch])
+            res.update(ctgs)
 
     with open(output, 'w') as f:
         f.write(json.dumps(res, indent=4))
     
     
-def get_contigs(chrom, start, end):
-    cen_contigs = []
+def get_contigs(chrom, aligns):
     result = {}
-    if start is not None:
-        start_contigs = join_contigs(start)
-        if start_contigs[0].ctg_start < 20000:
-            start_contigs[0].ctg_start = 0
-        result[chrom + '_s'] =  [ctg.toarray() for ctg in start_contigs]
-        ctg = start_contigs[-1]
-        if ctg.ctg_end < ctg.ctg_len:
-            align = Align(
-                chrom + '_c', -1, -1, -1, ctg.ctg_id, ctg.ctg_len, ctg.ctg_end, ctg.ctg_len, ctg.is_reverse)
-            cen_contigs.append(align)
-    end_contigs = join_contigs(end)
-    ctg = end_contigs[0]
-    if ctg.ctg_start > 0:
-        if len(cen_contigs) > 0 and cen_contigs[0].ctg_id == ctg.ctg_id:
-            cen_contigs[0].ctg_end = ctg.ctg_start
-        else:
-            align = Align(
-                chrom + '_c', -1, -1, -1, ctg.ctg_id, ctg.ctg_len, 0, ctg.ctg_start, ctg.is_reverse)
-            cen_contigs.append(align)
-
-    result[chrom + '_c'] = [ctg.toarray() for ctg in cen_contigs]
-    result[chrom + '_e'] = [ctg.toarray() for ctg in end_contigs]
+    contigs = join_contigs(aligns)
+    result[chrom] = [ctg.toarray() for ctg in contigs]
     return result
 
 
