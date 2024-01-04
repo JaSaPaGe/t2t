@@ -7,25 +7,6 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 import json
 
-class Align(object):
-
-    def __init__(self, chr_id, chr_len, chr_start, chr_end,
-                 ctg_id, ctg_len, ctg_start, ctg_end, is_reverse=False):
-        self.chr_id = chr_id
-        self.chr_len = chr_len
-        self.chr_start = chr_start
-        self.chr_end = chr_end
-        self.ctg_id = ctg_id
-        self.ctg_len = ctg_len
-        self.ctg_start = ctg_start
-        self.ctg_end = ctg_end
-        self.is_reverse = is_reverse
-
-    def toarray(self):
-        if self.is_reverse:
-            return [f'-{self.ctg_id}', self.ctg_start, self.ctg_end]
-        else:
-            return [self.ctg_id, self.ctg_start, self.ctg_end]
         
 @ck.command()
 @ck.option('--assembly', '-a', default='', help='Assembly contigs')
@@ -34,6 +15,8 @@ class Align(object):
 def main(assembly, config, output):
     chroms = [f'chr{i}' for i in range(1, 23)]
     chroms.append('chrX')
+    chroms.append('chrY')
+    chroms.append('chrM')
     
     with open(config) as f:
         json_text = f.read()
@@ -51,7 +34,7 @@ def main(assembly, config, output):
         for record in sequences:
             if record.id not in used:
                 records[record.id] = record
-
+                
     with open(output, 'w') as f:
         for rec_id, rec in records.items():
             SeqIO.write(rec, f, 'fasta')
