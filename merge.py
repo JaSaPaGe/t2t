@@ -14,6 +14,7 @@ import json
 def main(assembly, config, output):
     chroms = [f'chr{i}' for i in range(1, 23)]
     chroms.append('chrX')
+    chroms.append('chrY')
     chroms.append('chrM')
     records = merge_contigs(assembly, config)
     

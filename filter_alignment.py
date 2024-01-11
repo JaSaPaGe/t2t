@@ -29,9 +29,7 @@ def main(alignment_file, identity, seq_len):
             ident = round(match_num / base_num * 100, 2)
             seq_n = ch_end - ch_start + 1
             # # Ignore hits with low identity and short length
-            # if ident < identity or seq_n < seq_len:
-            #     continue
-            if seq_n < seq_len:
+            if ident < identity or seq_n < seq_len:
                 continue
             print(ch, ch_len, ch_start, ch_end, ctg_len, ctg_start, ctg_end, ctg, seq_n, it[4], ident)
 

@@ -49,8 +49,9 @@ def load_qv(filename):
     return res
 
 @ck.command()
-def main():
-    lengths('data/assembly_ksa002/ksa002.asm.hap1.centro.fa')
+@ck.option('--assembly', '-a', default='', help='Assembly contigs')
+def main(assembly):
+    lengths(assembly)
     return
     ksa_len = load_lens('ksa001v0.3.0.len')
     chm_len = load_lens('chm13.len')

@@ -21,6 +21,10 @@ class Align(object):
         self.ctg_end = ctg_end
         self.is_reverse = is_reverse
 
+    @property
+    def ctg_tail(self):
+        return self.ctg_len - self.ctg_end
+
     def toarray(self):
         if self.is_reverse:
             return [f'-{self.ctg_id}', self.ctg_start, self.ctg_end]
@@ -41,7 +45,7 @@ def main(alignment_file, output):
             ctg = it[7]
             ctg_len = int(it[4])
             ctg_start, ctg_end = int(it[5]), int(it[6])
-            reverse = it[-1] == '-'
+            reverse = it[9] == '-'
             if reverse:
                 ctg_start = ctg_len - ctg_end
                 ctg_end = ctg_len - int(it[5])
@@ -69,6 +73,10 @@ def main(alignment_file, output):
 def get_contigs(chrom, aligns):
     result = {}
     contigs = join_contigs(aligns)
+    if contigs[0].ctg_start < 50000:
+        contigs[0].ctg_start = 0
+    if contigs[-1].ctg_tail < 50000:
+        contigs[-1].ctg_end = contigs[-1].ctg_len
     result[chrom] = [ctg.toarray() for ctg in contigs]
     return result
 
@@ -78,7 +86,7 @@ def join_contigs(contigs):
     joined.append(contigs[0])
     ind = 1
     while ind < len(contigs):
-        if joined[-1].ctg_id == contigs[ind].ctg_id:
+        if joined[-1].ctg_id == contigs[ind].ctg_id and joined[-1].is_reverse == contigs[ind].is_reverse:
             if joined[-1].chr_end < contigs[ind].chr_end:
                 joined[-1].ctg_end = contigs[ind].ctg_end
                 joined[-1].chr_end = contigs[ind].chr_end
@@ -89,7 +97,7 @@ def join_contigs(contigs):
                     contigs[ind].chr_start = joined[-1].chr_end
                     contigs[ind].ctg_start += diff
                 else:
-                    gap_len = contigs[ind].chr_start - joined[-1].chr_end
+                    gap_len = 100 # contigs[ind].chr_start - joined[-1].chr_end
                     gap = Align(
                         contigs[ind].chr_id, -1, -1, -1,
                         'gap', gap_len, 0, gap_len, False)
