@@ -6,8 +6,8 @@ import os
 from pathlib import Path
 import gzip
 
-ck.command()
-ck.option('--chrom', '-chr', help='Chromosome', default='')
+@ck.command()
+@ck.option('--chrom', '-chr', help='Chromosome', default='')
 def main(chrom):
     genomes = {
         'chm13': 'reference/chm13v2.0.fa',

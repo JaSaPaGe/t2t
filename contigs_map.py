@@ -72,11 +72,19 @@ def main(alignment_file, output):
     
 def get_contigs(chrom, aligns):
     result = {}
+    len_lim = 5000000
     contigs = join_contigs(aligns)
-    if contigs[0].ctg_start < 50000:
+    if contigs[0].ctg_start < len_lim:
         contigs[0].ctg_start = 0
-    if contigs[-1].ctg_tail < 50000:
+    if contigs[-1].ctg_tail < len_lim:
         contigs[-1].ctg_end = contigs[-1].ctg_len
+    for i in range(1, len(contigs)):
+        if contigs[i - 1].ctg_id == 'gap':
+            if contigs[i].ctg_start < len_lim:
+                contigs[i].ctg_start = 0
+        if i + 1 < len(contigs) and contigs[i + 1].ctg_id == 'gap':
+            if contigs[i].ctg_tail < len_lim:
+                contigs[i].ctg_end = contigs[i].ctg_len
     result[chrom] = [ctg.toarray() for ctg in contigs]
     return result
 
